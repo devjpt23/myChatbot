@@ -5,9 +5,12 @@ from openai import OpenAI
 import pygame
 import time
 import warnings
+import speech_recognition as sr
+
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 load_dotenv()
+r = sr.Recognizer()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 messages = [
@@ -29,10 +32,20 @@ def getting_speech(response_text):
     while pygame.mixer.music.get_busy():
         time.sleep(0.1)
     pygame.mixer.quit()
+    
+def gettingInputInVoice():
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source, duration= 0.2)
+        print("say something... ")
+        audio = r.listen(source)
+    
+    return r.recognize_whisper(audio, language='english')
 
 while True:
     try:
-        user_prompt = input("user: ")
+
+        # user_prompt = input("user: ")
+        user_prompt = gettingInputInVoice()
         messages.append({'role': 'user', 'content': user_prompt})
 
         chat_completion = client.chat.completions.create(
@@ -46,6 +59,4 @@ while True:
 
     except EOFError:
         break
-    
 
-    
