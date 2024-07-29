@@ -1,0 +1,8 @@
+groq==0.9.0
+numpy==2.0.1
+openai==1.37.1
+openai_whisper==20231117
+pygame==2.5.2
+python-dotenv==1.0.1
+soundfile==0.12.1
+SpeechRecognition==3.10.4
