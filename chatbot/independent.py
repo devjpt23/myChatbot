@@ -8,7 +8,7 @@ import whisper
 import warnings
 warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")
 
-def recognize_whisper(
+def recog_whisper(
         audio_data, model = "base", show_dict = False, load_options = None, language = 'english', translate = False, **transscribe_options
 ):
 
@@ -28,7 +28,10 @@ def recognize_whisper(
         **transscribe_options
     )
 
-    return result
+    if show_dict:
+        return result
+    else:
+        return result['text']
 
 r = sr.Recognizer()
 with sr.Microphone() as source:
@@ -36,6 +39,6 @@ with sr.Microphone() as source:
     print("Say something ")
     audio = r.listen(source)
 
-transcription = recognize_whisper(audio, model='base', show_dict = True) 
+transcription = recog_whisper(audio, model='base') 
 print(transcription)
 
