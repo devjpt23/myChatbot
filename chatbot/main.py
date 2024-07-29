@@ -7,6 +7,17 @@ import time
 import warnings
 import speech_recognition as sr
 
+warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")
+
+
+# these are the modules for new rec function
+
+import io
+import soundfile as sf
+import numpy as np
+import whisper
+# we also use speech rec but, as it's shared
+
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 load_dotenv()
@@ -32,6 +43,28 @@ def getting_speech(response_text):
     while pygame.mixer.music.get_busy():
         time.sleep(0.1)
     pygame.mixer.quit()
+def recog_whisper(
+        audio_data, model = "base", show_dict = False, load_options = None, language = 'english', translate = False, **transscribe_options
+):
+    assert isinstance(audio_data,sr.AudioData)
+    whisper_model = whisper.load_model(model, **load_options or {})
+
+    wav_bytes = audio_data.get_wav_data(convert_rate=16000)
+    wav_stream = io.BytesIO(wav_bytes)
+    audio_array, samplingRate = sf.read(wav_stream)
+    audio_array = audio_array.astype(np.float32)
+
+    result = whisper_model.transcribe(
+        audio_array,
+        language = language,
+        task = 'translate' if translate else None,
+        **transscribe_options
+    )
+
+    if show_dict:
+        return result
+    else:
+        return result['text'] 
     
 def gettingInputInVoice():
     with sr.Microphone() as source:
@@ -39,7 +72,8 @@ def gettingInputInVoice():
         print("say something... ")
         audio = r.listen(source)
     
-    return r.recognize_whisper(audio, language='english')
+    # return r.recognize_whisper(audio, language='english') # this is the one with speech_recognition module
+    return recog_whisper(audio, model = 'base') # this one is my own function
 
 while True:
     try:
