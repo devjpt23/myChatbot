@@ -1,13 +1,19 @@
 import whisper
-from mypackage.audio import AudioData
+# from mypackage.audio import AudioData
 import io
 import soundfile as sf
 import numpy as np
-from . import Microphone, Recognizer
+import sys
+import os
+# from . import Microphone, Recognizer
 import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from mypackage.audio import AudioData
+from mypackage.microphone import Microphone, Recognizer
 def main():
     transcription = recog_whisper(mic_recognition(), model='base') 
     print(transcription)
