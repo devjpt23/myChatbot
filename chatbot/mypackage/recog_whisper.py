@@ -8,6 +8,10 @@ import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")
 
+def main():
+    transcription = recog_whisper(mic_recognition(), model='base') 
+    print(transcription)
+
 def recog_whisper(
         audio_data, model = "base", show_dict = False, load_options = None, language = 'english', translate = False, **transscribe_options
 ):
@@ -33,11 +37,14 @@ def recog_whisper(
     else:
         return result['text']
     
-r = Recognizer()
-with Microphone() as source:
-    r.adjust_for_ambient_noise(source,duration=0.2)
-    print("Say something ")
-    audio = r.listen(source)
+def mic_recognition():
+    r = Recognizer()
+    with Microphone() as source:
+        r.adjust_for_ambient_noise(source,duration=0.2)
+        print("Say something ")
+        audio = r.listen(source)
+        return audio
 
-transcription = recog_whisper(audio, model='base') 
-print(transcription)
+if __name__ == '__main__':
+    main()
+
