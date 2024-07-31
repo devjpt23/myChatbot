@@ -50,8 +50,9 @@ def getting_speech(response_text):
         time.sleep(0.1)
     pygame.mixer.quit()
 
+# TODO: Delete assitant.mp3 after use
 
-def recog_whisper(
+def recognize_voice(
     audio_data,
     model="base",
     show_dict=False,
@@ -66,6 +67,7 @@ def recog_whisper(
     wav_bytes = audio_data.get_wav_data(convert_rate=16000)
     wav_stream = io.BytesIO(wav_bytes)
     audio_array, samplingRate = sf.read(wav_stream)
+    #TODO: Remove library, get audio array in correct format for whisper using pyaudio
     audio_array = audio_array.astype(np.float32)
 
     result = whisper_model.transcribe(
@@ -83,12 +85,13 @@ def recog_whisper(
 
 def gettingInputInVoice():
     with sr.Microphone() as source:
+        # TODO: Make this work using pyaudio
         r.adjust_for_ambient_noise(source, duration=0.2)
         print("say something... ")
         audio = r.listen(source)
 
     # return r.recognize_whisper(audio, language='english') # this is the one with speech_recognition module
-    return recog_whisper(audio, model="base")  # this one is my own function
+    return recognize_voice(audio, model="base")  # this one is my own function
 
 
 while True:
