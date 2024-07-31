@@ -36,8 +36,8 @@ messages = [
 
 
 def getting_speech(response_text):
-    client2 = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    response_speech = client2.audio.speech.create(
+    openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    response_speech = openai_client.audio.speech.create(
         model="tts-1", voice="alloy", input=response_text
     )
     response_speech.stream_to_file("assistant.mp3")
