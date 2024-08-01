@@ -1,3 +1,4 @@
 .env
 unittestForKey.py
 assitant.mp3
+chatbot\mypackage\__pycache__
