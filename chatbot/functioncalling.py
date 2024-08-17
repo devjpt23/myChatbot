@@ -69,7 +69,7 @@ cart_items = []
 
 price_list = {
     "classic cheese pizza": 10,
-    "Hawaian Pizza":100,
+    "Hawaian Pizza": 100,
     "Tropical Pizza": 150,
     "Neopolitan Pizza": 31,
 }
@@ -137,23 +137,17 @@ def remove_item(itemName, quantity):
     return json.dumps(get_cart())
 
 
-# ❌❌❌❌❌❌❌❌❌❌❌❌
-
-
 def get_bill():
     total_price = 0
-    per_item_bill = [
-
-    ]
+    per_item_bill = []
     for count, item_name in cart_items:
         item_price = price_list.get(item_name)
         total_price += item_price * count
-        per_item_bill.append(f'{item_name} : {count} x {item_price} dollars = {count * item_price} dollars')
+        per_item_bill.append(
+            f"{item_name} : {count} x {item_price} dollars = {count * item_price} dollars"
+        )
 
-    return json.dumps({
-        "Total Bill": total_price,
-        "Itemized Bill": per_item_bill
-    })
+    return json.dumps({"Total Bill": total_price, "Itemized Bill": per_item_bill})
 
 
 tools = [
@@ -266,7 +260,7 @@ tools = [
             },
         },
     },
-     {
+    {
         "type": "function",
         "function": {
             "name": "get_bill",
@@ -294,7 +288,7 @@ def run_coversation(user_prompt):
             "get_cart_items": get_cart_items,
             "get_cart": get_cart,
             "remove_item": remove_item,
-            "get_bill":get_bill,
+            "get_bill": get_bill,
         }
         messages.append(response_message)
 
