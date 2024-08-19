@@ -8,18 +8,18 @@ load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-MODEL = "llama3-groq-70b-8192-tool-use-preview"
+# MODEL = "llama3-groq-70b-8192-tool-use-preview"
+MODEL = "llama3-groq-8b-8192-tool-use-preview"
 # MODEL = "llama3-70b-8192"
 
 
 messages = [
     {
         "role": "system",
-        "content": "You are a function calling LLM that uses the data extracted from the functions to answer questions around pizza menu. Do not let the user know that you are a LLM, instead always tell them that you are a helpful pizza bot",
+        "content": "You are a function calling LLM that uses the data extracted from the functions to answer questions around pizza menu. Do not let the user know that you are a LLM, instead always tell them that you are a pizza bot.",
     }
 ]
 
-# IF THIS MODEL DOESNT WORK WELL WE NEED TO CHANGE IT TO MIXTRAL MODEL
 
 # WE NEED TO INITILIZE THE API CLIENT ---> CHECKED
 # WE NEED TO DEFINE A FUNCTION AND CONVERSATION PARAMETERS -- checked
@@ -52,14 +52,13 @@ messages = [
 # ✅✅✅function number 5--checked✅✅✅
 # WE NEED TO ADD ITEM TO THE CART
 # ---> ADD THE CHOOSEN ITEM INTO THE CART
+
 # 〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️
-
-
 # ✅✅✅function number 6--checked✅✅✅
 # ---> INDICATE THE DESCRIPTION OF THE PIZZAS OR FOOD ITEM
+# 〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️
 
-# function number 8
-
+# ✅✅✅function number 8✅✅✅
 # WE NEED TO FINALISE THE ORDER
 # ---> WE NEED TO MAKE THE ORDER IN THE CART AND GET THE TOTAL OF THE ITEMS
 # ORDERED AND PRESENT IT TO THE CUSTOMER
@@ -68,10 +67,10 @@ messages = [
 cart_items = []
 
 price_list = {
-    "classic cheese pizza": 10,
-    "Hawaian Pizza": 100,
-    "Tropical Pizza": 150,
-    "Neopolitan Pizza": 31,
+    "Classic Cheese Pizza": 10,
+    "Hawaian Pizza": 11,
+    "Tropical Pizza": 15,
+    "Neopolitan Pizza": 14,
 }
 
 
@@ -82,7 +81,7 @@ def get_repsonse(question):
 def get_pizza_menu():
     menu = [
         [
-            "classic Cheese Pizza",
+            "Classic Cheese Pizza",
         ],
         [
             "Hawaian Pizza",
@@ -99,7 +98,7 @@ def get_pizza_menu():
 
 def get_pizza_description(itemName):
     description = {
-        "classic cheese pizza": "just full of the cheese you like, who doesnt like cheese",
+        "Classic Cheese Pizza": "just full of the cheese you like, who doesnt like cheese",
         "Hawaian Pizza": "it flys from the beaches of hawai on spot you order it (t/c apply)",
         "Tropical Pizza": "A vacation on a slice! Imagine a cheesy paradise topped with juicy pineapple, zesty mango chunks, and a hint of spicy jalapeño for that island kick. It's like a beach party in your mouth—no sunscreen required!",
         "Neopolitan Pizza": "just neopolitan,  like usual",
@@ -112,6 +111,8 @@ def get_pizza_price(itemName):
     if price_list.get(itemName):
         return json.dumps(price_list.get(itemName))
 
+def get_all_price_list():
+    return json.dumps(price_list)
 
 def get_cart_items(itemCount, itemName):  # this function adds a pizza in cart
 
@@ -155,7 +156,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "get_response",
-            "description": "Your name is Bob the pizza guy. Responding a casual chat, if you are confused or dont know the answer to something just say and even if you are not sure which function to use just say 'Sorry i am not sure how can i help you with that. Could you make the statement more clear'",
+            "description": "Your name is Bob the pizza guy. Responding a casual chat, if you are confused or dont know the answer to something just say and even if you are not sure which function to use just say 'Sorry i am not sure how can i help you with that. Could you make the statement more clear'. If the user leaves a blank, just ask the user to say something",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -180,7 +181,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "get_pizza_price",
-            "description": "Get the price of pizza that user is looking. e.g what is the price of xyz pizza",
+            "description": "Get the price of pizza that user is looking. e.g what is the price of xyz pizza.Allow spelling mistakes, match the pizza typed with the closest pizza in the menu so this can avoid errors in the code",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -197,7 +198,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "get_cart_items",
-            "description": "Adds item to the cart for example 'can you please add one xyz pizza' or 'can you add another xyz pizza' so this will increment the value of current item by one",
+            "description": "Adds item to the cart for example 'can you please add one xyz pizza' or 'can you add another xyz pizza' so this will increment the value of current item by one. Allow spelling mistakes, match the pizza typed with the closest pizza in the menu so this can avoid errors in the code",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -247,7 +248,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "get_pizza_description",
-            "description": "Get the description of the pizza when asked for",
+            "description": "Get the description of the pizza when asked for. Allow spelling mistakes, match the pizza typed with the closest pizza in the menu so this can avoid errors in the code",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -265,6 +266,14 @@ tools = [
         "function": {
             "name": "get_bill",
             "description": "Gets the bills of the items present in the cart e.g can you give me the bill",
+            "parameters": {},
+        },
+    },
+        {
+        "type": "function",
+        "function": {
+            "name": "get_all_price_list",
+            "description": "Get the price list of all pizzas in the menu",
             "parameters": {},
         },
     },
@@ -289,6 +298,7 @@ def run_coversation(user_prompt):
             "get_cart": get_cart,
             "remove_item": remove_item,
             "get_bill": get_bill,
+            "get_all_price_list":get_all_price_list,
         }
         messages.append(response_message)
 
